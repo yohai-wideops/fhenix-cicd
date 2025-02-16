@@ -36,7 +36,12 @@ jobs:
         docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-backend:${{ env.COMMIT_HASH }} -f backend/Dockerfile backend
         docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-backend:${{ env.COMMIT_HASH }}
 
-    - name: Build and Push Frontend Image
+    - name: Build and Push HPC Frontend Image
       run: |
         docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-hpc:${{ env.COMMIT_HASH }} -f hpc/Dockerfile hpc
         docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-hpc:${{ env.COMMIT_HASH }}
+
+    - name: Build and Push Default Frontend Image
+      run: |
+        docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-default:${{ env.COMMIT_HASH }} -f default/Dockerfile default
+        docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-default:${{ env.COMMIT_HASH }}

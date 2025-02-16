@@ -6,7 +6,7 @@
     <title>Document</title>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            fetch('http://localhost:3000/api/env')  // Ensure this points to the backend
+            fetch('http://backend:3000/api/env')  // Ensure this points to the backend
                 .then(response => response.json())
                 .then(data => {
                     document.body.style.backgroundColor = data.BG_COLOR || 'white';
