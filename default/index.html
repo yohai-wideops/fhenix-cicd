@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('http://localhost:3000/api/env')  // Ensure this points to the backend
+                .then(response => response.json())
+                .then(data => {
+                    document.body.style.backgroundColor = data.BG_COLOR || 'white';
+                })
+                .catch(error => console.error('Error fetching environment variable:', error));
+        });
+    </script>
+    
+</head>
+<body>
+    <main>
+        <h1>This is the default deployment</h1>
+    </main>
+</body>
+</html>
