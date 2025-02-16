@@ -1,0 +1,42 @@
+name: Build and Push to Google Artifact Registry
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Images
+    runs-on: ubuntu-latest
+    environment: cicd-poc  # Specify the environment here
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Get Commit Hash
+      run: echo "COMMIT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Configure Docker to Use GAR
+      run: |
+        gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev
+
+    - name: Build and Push Backend Image
+      run: |
+        docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-backend:${{ env.COMMIT_HASH }} -f backend/Dockerfile backend
+        docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-backend:${{ env.COMMIT_HASH }}
+
+    - name: Build and Push Frontend Image
+      run: |
+        docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-hpc:${{ env.COMMIT_HASH }} -f hpc/Dockerfile hpc
+        docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-hpc:${{ env.COMMIT_HASH }}
