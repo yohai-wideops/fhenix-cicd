@@ -8,7 +8,7 @@ WORKDIR /app
 RUN npm install express cors
 
 # Copy backend code
-COPY backend/server.js .
+COPY ./backend/server.js .
 
 # Set environment variable (default to 3000)
 ENV PORT=3000
