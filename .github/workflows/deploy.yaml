@@ -45,3 +45,24 @@ jobs:
       run: |
         docker build -t ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-default:${{ env.COMMIT_HASH }} -f default/Dockerfile default
         docker push ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/poc-frontend-default:${{ env.COMMIT_HASH }}
+
+    - name: Update Helm Chart Values
+      run: |
+        git config --global user.email "github-actions@github.com"
+        git config --global user.name "GitHub Actions"
+
+        # Clone the Helm chart repository
+        git clone https://${{ secrets.GH_TOKEN }}@github.com/${{ secrets.ORG }}/${{ secrets.HELM_REPO }}.git helm-repo
+        cd helm-repo
+
+        # Update the image tag in values.yaml for each service
+        sed -i "s|tag: .*|tag: ${{ env.COMMIT_HASH }}|g" backend/values.yaml
+        sed -i "s|tag: .*|tag: ${{ env.COMMIT_HASH }}|g" frontend-default/values.yaml
+        sed -i "s|tag: .*|tag: ${{ env.COMMIT_HASH }}|g" frontend-hpc/values.yaml
+        
+        # Commit and push the changes
+        git add .
+        git commit -m "Update Helm chart values with new image tag: ${{ env.COMMIT_HASH }}"
+        git push origin main
+      env:
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
